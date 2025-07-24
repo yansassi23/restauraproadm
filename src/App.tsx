@@ -15,6 +15,8 @@ function App() {
 
   const { requests, loading, error, refetch, updateRequestStatus } = useRestorationRequests();
 
+  console.log('App state:', { activeTab, requests: requests.length, loading, error });
+
   const handleViewRequest = (request: RestorationRequest) => {
     setSelectedRequest(request);
     setModalOpen(true);
@@ -81,7 +83,7 @@ function App() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex-1 lg:ml-0">
+      <div className="flex-1">
         <div className="p-6 lg:p-8">
           {activeTab === 'dashboard' && <Dashboard requests={requests} />}
           {activeTab === 'requests' && (
