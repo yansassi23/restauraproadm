@@ -27,6 +27,14 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
     }
   ];
 
+  const handleMenuClick = (itemId: 'dashboard' | 'requests') => {
+    console.log('Menu item clicked:', itemId);
+    onTabChange(itemId);
+    if (window.innerWidth < 1024) {
+      onToggle();
+    }
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -40,16 +48,17 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
       {/* Mobile menu button */}
       <button
         onClick={onToggle}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
       >
         <Menu className="h-5 w-5 text-gray-700" />
       </button>
 
       {/* Sidebar */}
       <div className={`
-        fixed left-0 top-0 h-full bg-white shadow-lg z-40 w-64 transform transition-transform duration-300 ease-in-out border-r border-gray-200
-        lg:relative lg:translate-x-0
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed top-0 left-0 h-full bg-white shadow-lg z-40 w-64 border-r border-gray-200
+        lg:relative lg:translate-x-0 lg:shadow-none
+        transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -64,7 +73,7 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
           </div>
           <button
             onClick={onToggle}
-            className="lg:hidden p-1 hover:bg-gray-100 rounded"
+            className="lg:hidden p-1 hover:bg-gray-100 rounded transition-colors"
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -76,17 +85,12 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => {
-                  onTabChange(item.id);
-                  if (window.innerWidth < 1024) {
-                    onToggle();
-                  }
-                }}
+                onClick={() => handleMenuClick(item.id)}
                 className={`
-                  w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                  w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200
                   ${activeTab === item.id 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }
                 `}
               >
@@ -100,9 +104,9 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
         </nav>
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-gray-500">Sistema Online</span>
           </div>
         </div>

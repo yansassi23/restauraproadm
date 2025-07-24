@@ -21,7 +21,7 @@ export function RequestsList({ requests, onViewRequest, onUpdateStatus }: Reques
   const [filter, setFilter] = useState<'all' | RestorationRequest['status']>('all');
   const [search, setSearch] = useState('');
 
-  console.log('RequestsList rendered with:', { requests: requests.length, filter, search });
+  console.log('RequestsList component rendered - requests:', requests.length, 'filter:', filter, 'search:', search);
 
   const filteredRequests = requests.filter(request => {
     const matchesFilter = filter === 'all' || request.status === filter;
@@ -32,7 +32,7 @@ export function RequestsList({ requests, onViewRequest, onUpdateStatus }: Reques
     return matchesFilter && matchesSearch;
   });
 
-  console.log('Filtered requests:', filteredRequests.length);
+  console.log('RequestsList - filtered requests count:', filteredRequests.length);
 
   const handleDownloadImage = async (imageUrl: string, filename: string) => {
     try {

@@ -15,7 +15,7 @@ function App() {
 
   const { requests, loading, error, refetch, updateRequestStatus } = useRestorationRequests();
 
-  console.log('App state:', { activeTab, requests: requests.length, loading, error });
+  console.log('App rendered - activeTab:', activeTab, 'requests count:', requests.length, 'loading:', loading, 'error:', error);
 
   const handleViewRequest = (request: RestorationRequest) => {
     setSelectedRequest(request);
@@ -35,6 +35,10 @@ function App() {
     return success;
   };
 
+  const handleTabChange = (tab: 'dashboard' | 'requests') => {
+    console.log('Tab change requested:', tab);
+    setActiveTab(tab);
+  };
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -78,13 +82,14 @@ function App() {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex-1">
+      <div className="flex-1 lg:ml-0">
         <div className="p-6 lg:p-8">
+          {console.log('Rendering content for tab:', activeTab)}
           {activeTab === 'dashboard' && <Dashboard requests={requests} />}
           {activeTab === 'requests' && (
             <RequestsList
