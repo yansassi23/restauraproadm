@@ -15,7 +15,8 @@ import {
   Phone,
   DollarSign,
   Package,
-  Trash2
+  Trash2,
+  Truck
 } from 'lucide-react';
 
 interface OrdersListProps {
@@ -267,6 +268,30 @@ export function OrdersList({ requests, onViewRequest, onUpdateStatus, onDeleteRe
                 {request.notes && (
                   <div className="bg-blue-50 p-2 rounded text-xs text-blue-800 border border-blue-200">
                     <p className="line-clamp-2">{request.notes}</p>
+                  </div>
+                )}
+
+                {/* Método de Entrega */}
+                {request.delivery_method && request.delivery_method.length > 0 && (
+                  <div className="border-t border-gray-100 pt-3 mt-3">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Truck className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700">Entrega:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {request.delivery_method.map((method, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
+                        >
+                          {method === 'email' ? 'E-mail' :
+                           method === 'whatsapp' ? 'WhatsApp' :
+                           method === 'download' ? 'Download' :
+                           method === 'physical' ? 'Físico' :
+                           method}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

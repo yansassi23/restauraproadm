@@ -38,6 +38,7 @@ export function useRestorationRequests() {
         customer_phone: customer.phone,
         original_image_url: customer.image_url?.[0] || '',
         restored_image_url: customer.image_url?.[1] || null,
+        delivery_method: customer.delivery_method || [],
         status: (customer.payment_status === 'completed' ? 'completed' : 
                 customer.payment_status === 'processing' ? 'processing' : 
                 customer.payment_status === 'cancelled' ? 'cancelled' : 'pending') as RestorationRequest['status'],

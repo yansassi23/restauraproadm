@@ -12,7 +12,8 @@ import {
   DollarSign,
   Package,
   Hash,
-  Trash2
+  Trash2,
+  Truck
 } from 'lucide-react';
 
 interface RequestModalProps {
@@ -161,6 +162,28 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus, onDelet
                   <div>
                     <p className="text-sm text-gray-500">Número do Pedido</p>
                     <p className="font-medium text-gray-900">{request.order_number}</p>
+                  </div>
+                </div>
+              )}
+              {request.delivery_method && request.delivery_method.length > 0 && (
+                <div className="flex items-center space-x-3">
+                  <Truck className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Método de Entrega</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {request.delivery_method.map((method, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                        >
+                          {method === 'email' ? 'E-mail' :
+                           method === 'whatsapp' ? 'WhatsApp' :
+                           method === 'download' ? 'Download' :
+                           method === 'physical' ? 'Físico' :
+                           method}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
