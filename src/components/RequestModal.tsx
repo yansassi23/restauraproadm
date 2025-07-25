@@ -289,24 +289,6 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus, onDelet
                       request.restored_image_url!, 
                       `restored_${request.customer_name}_${request.id}.jpg`
                     )}
-                    <div className="flex items-center space-x-3">
-                      <DollarSign className="h-5 w-5 text-red-600" />
-                      <div>
-                        <p className="text-sm text-gray-500">Taxa de Pagamento</p>
-                        <p className="font-semibold text-red-700 text-lg">
-                          R$ {request.payment_fee.toFixed(2).replace('.', ',')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <DollarSign className="h-5 w-5 text-emerald-600" />
-                      <div>
-                        <p className="text-sm text-gray-500">Lucro Real</p>
-                        <p className={`font-semibold text-lg ${request.real_profit >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                          R$ {request.real_profit.toFixed(2).replace('.', ',')}
-                        </p>
-                      </div>
-                    </div>
                     className="flex items-center space-x-2 px-3 py-1 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
                   >
                     <Download className="h-4 w-4" />
