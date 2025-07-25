@@ -36,6 +36,21 @@ export function Dashboard({ requests }: DashboardProps) {
     .reduce((sum, request) => {
       return sum + (request.plan_price ? Number(request.plan_price) : 0);
     }, 0);
+
+  // Calcular total de taxas e lucro real
+  const totalFees = requests.reduce((sum, request) => {
+    return sum + request.payment_fee;
+  }, 0);
+
+  const totalRealProfit = requests.reduce((sum, request) => {
+    return sum + request.real_profit;
+  }, 0);
+
+  const completedRealProfit = requests
+    .filter(r => r.status === 'completed')
+    .reduce((sum, request) => {
+      return sum + request.real_profit;
+    }, 0);
   const statCards = [
     {
       title: 'Total de Pedidos',
@@ -50,6 +65,20 @@ export function Dashboard({ requests }: DashboardProps) {
       icon: DollarSign,
       color: 'bg-green-500',
       textColor: 'text-green-600'
+    },
+    {
+      title: 'Total de Taxas',
+      value: `R$ ${totalFees.toFixed(2).replace('.', ',')}`,
+      icon: TrendingUp,
+      color: 'bg-red-500',
+      textColor: 'text-red-600'
+    },
+    {
+      title: 'Lucro Real Total',
+      value: `R$ ${totalRealProfit.toFixed(2).replace('.', ',')}`,
+      icon: TrendingUp,
+      color: 'bg-emerald-500',
+      textColor: 'text-emerald-600'
     },
     {
       title: 'Pendentes',
@@ -71,13 +100,18 @@ export function Dashboard({ requests }: DashboardProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg">
-          <TrendingUp className="h-5 w-5 text-green-600" />
-          <span className="text-green-700 font-medium">Taxa de Conclusão: {completionRate}%</span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 bg-emerald-50 px-4 py-2 rounded-lg">
+            <TrendingUp className="h-5 w-5 text-emerald-600" />
+            <span className="text-emerald-700 font-medium">Lucro Real Concluído: R$ {completedRealProfit.toFixed(2).replace('.', ',')}</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg">
+            <TrendingUp className="h-5 w-5 text-green-600" />
+            <span className="text-green-700 font-medium">Taxa de Conclusão: {completionRate}%</span>
+          </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         {statCards.map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <div className="flex items-center justify-between">
@@ -115,9 +149,14 @@ export function Dashboard({ requests }: DashboardProps) {
                   </div>
                   <div className="flex items-center space-x-4">
                     {request.plan_price && (
-                      <span className="text-sm font-semibold text-green-600">
-                        R$ {Number(request.plan_price).toFixed(2).replace('.', ',')}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-sm font-semibold text-green-600 block">
+                          R$ {Number(request.plan_price).toFixed(2).replace('.', ',')}
+                        </span>
+                        <span className={`text-xs font-medium ${request.real_profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          Lucro: R$ {request.real_profit.toFixed(2).replace('.', ',')}
+                        </span>
+                      </div>
                     )}
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                       request.status === 'completed' ? 'bg-green-100 text-green-800' :
