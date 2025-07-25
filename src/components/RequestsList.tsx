@@ -32,6 +32,25 @@ export function RequestsList({ requests, onViewRequest, onUpdateStatus, onDelete
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
+  // Função para formatar número de telefone para WhatsApp
+  const formatPhoneForWhatsApp = (phone: string) => {
+    // Remove todos os caracteres não numéricos
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Se não começar com 55 (código do Brasil), adiciona
+    if (!cleanPhone.startsWith('55')) {
+      return `55${cleanPhone}`;
+    }
+    
+    return cleanPhone;
+  };
+
+  // Função para criar link do WhatsApp
+  const createWhatsAppLink = (phone: string, customerName: string) => {
+    const formattedPhone = formatPhoneForWhatsApp(phone);
+    const message = encodeURIComponent(`Olá ${customerName}! Entrando em contato sobre seu pedido de restauração de imagem.`);
+    return `https://wa.me/${formattedPhone}?text=${message}`;
+  };
   const filteredRequests = requests.filter(request => {
     const matchesFilter = filter === 'all' || request.status === filter;
     const matchesSearch = 
@@ -241,7 +260,15 @@ export function RequestsList({ requests, onViewRequest, onUpdateStatus, onDelete
                 {request.customer_phone && (
                   <div className="flex items-center space-x-2">
                     <Phone className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">{request.customer_phone}</span>
+                    <a
+                      href={createWhatsAppLink(request.customer_phone, request.customer_name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-green-600 hover:text-green-700 hover:underline transition-colors"
+                      title="Abrir conversa no WhatsApp"
+                    >
+                      {request.customer_phone}
+                    </a>
                   </div>
                 )}
 

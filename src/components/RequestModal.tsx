@@ -31,6 +31,25 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus, onDelet
 
   if (!isOpen || !request) return null;
 
+  // Função para formatar número de telefone para WhatsApp
+  const formatPhoneForWhatsApp = (phone: string) => {
+    // Remove todos os caracteres não numéricos
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Se não começar com 55 (código do Brasil), adiciona
+    if (!cleanPhone.startsWith('55')) {
+      return `55${cleanPhone}`;
+    }
+    
+    return cleanPhone;
+  };
+
+  // Função para criar link do WhatsApp
+  const createWhatsAppLink = (phone: string, customerName: string) => {
+    const formattedPhone = formatPhoneForWhatsApp(phone);
+    const message = encodeURIComponent(`Olá ${customerName}! Entrando em contato sobre seu pedido de restauração de imagem.`);
+    return `https://wa.me/${formattedPhone}?text=${message}`;
+  };
   const handleUpdateStatus = async () => {
     setIsUpdating(true);
     const success = await onUpdateStatus(request.id, selectedStatus, notes);
@@ -137,7 +156,15 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus, onDelet
                   <Phone className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-500">Telefone</p>
-                    <p className="font-medium text-gray-900">{request.customer_phone}</p>
+                    <a
+                      href={createWhatsAppLink(request.customer_phone, request.customer_name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-green-600 hover:text-green-700 hover:underline transition-colors"
+                      title="Abrir conversa no WhatsApp"
+                    >
+                      {request.customer_phone}
+                    </a>
                   </div>
                 </div>
               )}
