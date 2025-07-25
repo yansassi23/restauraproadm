@@ -8,7 +8,11 @@ import {
   Phone, 
   Calendar,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  DollarSign,
+  Package,
+  Hash,
+  Trash2
 } from 'lucide-react';
 
 interface RequestModalProps {
@@ -16,9 +20,10 @@ interface RequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdateStatus: (id: string, status: RestorationRequest['status'], notes?: string) => Promise<boolean>;
+  onDeleteRequest: (id: string) => Promise<boolean>;
 }
 
-export function RequestModal({ request, isOpen, onClose, onUpdateStatus }: RequestModalProps) {
+export function RequestModal({ request, isOpen, onClose, onUpdateStatus, onDeleteRequest }: RequestModalProps) {
   const [selectedStatus, setSelectedStatus] = useState<RestorationRequest['status']>('pending');
   const [notes, setNotes] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -34,6 +39,19 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus }: Reque
     setIsUpdating(false);
   };
 
+  const handleDeleteRequest = async () => {
+    const confirmMessage = `Tem certeza que deseja excluir o pedido de ${request.customer_name}?\n\nEsta ação não pode ser desfeita e irá:\n• Remover o registro do banco de dados\n• Excluir todas as imagens associadas\n• Remover permanentemente todos os dados`;
+    
+    if (window.confirm(confirmMessage)) {
+      const success = await onDeleteRequest(request.id);
+      if (success) {
+        alert('Pedido excluído com sucesso!');
+        onClose();
+      } else {
+        alert('Erro ao excluir pedido. Tente novamente.');
+      }
+    }
+  };
   const handleDownloadImage = async (imageUrl: string, filename: string) => {
     try {
       const response = await fetch(imageUrl);
@@ -77,12 +95,21 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus }: Reque
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Detalhes do Pedido</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X className="h-6 w-6 text-gray-500" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleDeleteRequest}
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              title="Excluir pedido"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="h-6 w-6 text-gray-500" />
+            </button>
+          </div>
         </div>
 
         <div className="p-6 space-y-6">
@@ -128,8 +155,55 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus }: Reque
                   </p>
                 </div>
               </div>
+              {request.order_number && (
+                <div className="flex items-center space-x-3">
+                  <Hash className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Número do Pedido</p>
+                    <p className="font-medium text-gray-900">{request.order_number}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Informações do Plano */}
+          {(request.plan_name || request.plan_price || request.plan_images) && (
+            <div className="bg-green-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalhes do Plano</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {request.plan_name && (
+                  <div className="flex items-center space-x-3">
+                    <Package className="h-5 w-5 text-green-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">Plano</p>
+                      <p className="font-medium text-gray-900">{request.plan_name}</p>
+                    </div>
+                  </div>
+                )}
+                {request.plan_price && (
+                  <div className="flex items-center space-x-3">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">Valor</p>
+                      <p className="font-semibold text-green-700 text-lg">
+                        R$ {Number(request.plan_price).toFixed(2).replace('.', ',')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {request.plan_images && (
+                  <div className="flex items-center space-x-3">
+                    <ImageIcon className="h-5 w-5 text-green-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">Imagens Incluídas</p>
+                      <p className="font-medium text-gray-900">{request.plan_images}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Status Atual */}
           <div className="flex items-center justify-between">
@@ -264,13 +338,22 @@ export function RequestModal({ request, isOpen, onClose, onUpdateStatus }: Reque
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <button
-              onClick={handleUpdateStatus}
-              disabled={isUpdating}
-              className="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {isUpdating ? 'Atualizando...' : 'Atualizar Status'}
-            </button>
+            <div className="flex items-center justify-between">
+              <button
+                onClick={handleUpdateStatus}
+                disabled={isUpdating}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {isUpdating ? 'Atualizando...' : 'Atualizar Status'}
+              </button>
+              <button
+                onClick={handleDeleteRequest}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Excluir Pedido</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -18,14 +18,14 @@ import {
   Trash2
 } from 'lucide-react';
 
-interface RequestsListProps {
+interface OrdersListProps {
   requests: RestorationRequest[];
   onViewRequest: (request: RestorationRequest) => void;
   onUpdateStatus: (id: string, status: RestorationRequest['status'], notes?: string) => Promise<boolean>;
   onDeleteRequest: (id: string) => Promise<boolean>;
 }
 
-export function RequestsList({ requests, onViewRequest, onUpdateStatus, onDeleteRequest }: RequestsListProps) {
+export function OrdersList({ requests, onViewRequest, onUpdateStatus, onDeleteRequest }: OrdersListProps) {
   const [filter, setFilter] = useState<'all' | RestorationRequest['status']>('all');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
@@ -122,8 +122,8 @@ export function RequestsList({ requests, onViewRequest, onUpdateStatus, onDelete
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Pedidos</h1>
-          <p className="text-gray-600 mt-1">Todos os pedidos de restauração</p>
+          <h1 className="text-3xl font-bold text-gray-900">Todos os Pedidos</h1>
+          <p className="text-gray-600 mt-1">Visualização completa de todos os pedidos de restauração</p>
         </div>
         <div className="text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded-lg">
           {sortedRequests.length} de {requests.length} pedidos
